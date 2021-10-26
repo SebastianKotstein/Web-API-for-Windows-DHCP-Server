@@ -9,4 +9,4 @@ This application uses a .NET wrapper written by Gary Sharp (see [link to project
   - clients assigned to a scope (client state, MAC address, assigned IP address, lease expiration details, ... )
   - reservations made for clients in a scope (MAC address, IP address, ... )
 - Supports both JSON (default) and XML as media type
-- Navigational client support through embedded hyperlinks (HATEOAS compliance)
+- Navigational support through embedded hyperlinks (HATEOAS compliance)
