@@ -10,3 +10,6 @@ This application uses a .NET wrapper written by Gary Sharp (see [link to project
   - reservations made for clients in a scope (MAC address, IP address, ... )
 - Supports both JSON (default) and XML as media type
 - Navigational support through embedded hyperlinks (HATEOAS compliance)
+
+## Prerequisites & Dependencies
+- Requires an service account (user) that is member of 'DHCP Users' (local group of the respective DHCP server(s))
