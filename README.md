@@ -12,5 +12,5 @@ This application uses a .NET wrapper written by Gary Sharp (see [link to project
 - Navigational support through embedded hyperlinks (HATEOAS compliance)
 
 ## Prerequisites & Dependencies
-- Requires a Windows-based machine running Microsoft's IIS web server plattform for hosting this ASP.NET application. This Windows machine must be in the same domain as the DHCP server(s).
+- Requires a Windows-based machine running Microsoft's IIS web server plattform for hosting this ASP.NET application. This Windows machine must be in the same domain as the DHCP server(s). The application has been successfully deployed and tested on Windows Server 2016 and IIS 10.
 - Requires an service account (user) that is member of the local group `DHCP Users`. The ASP.NET application must be executed with the identity of this service account. See the instructions below for setting up such an account and enabling the required ASP.NET feature called impersonation.
