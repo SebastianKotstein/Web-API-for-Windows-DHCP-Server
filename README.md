@@ -3,11 +3,11 @@ An ASP.NET application providing HTTP interfaces for querying information about 
 This application uses a .NET wrapper written by Gary Sharp (see [link to project](https://github.com/garysharp/DhcpServerApi)) for accessing Microsoft's native DHCP management API.
 
 ## Features
-- Read-only Web API with endpoints for querying information about:
-  - available Windows-based DHCP servers (including details about server's IP address, options, and version) 
-  - IP subnets (aka scopes) served by a particular DHCP server (including IP address, IP ranges, options, ... )
-  - clients assigned to a scope (client state, MAC address, assigned IP address, lease expiration details, ... )
-  - reservations made for clients in a scope (MAC address, IP address, ... )
+- Read-only Web API with endpoints for querying:
+  - the list of available **DHCP Servers** including details about their IP addresses, options, and versions 
+  - list of **Scopes** served by a particular DHCP server,including IP addresses, IP ranges, options, etc.
+  - **Clients** assigned to a scope including client states, MAC addresses, assigned IP addresses, lease expirations, etc.
+  - **Reservations** made for clients in a scope (MAC addresses, IP address, etc. )
 - Supports both JSON (default) and XML as media type
 - Navigational support through embedded hyperlinks (HATEOAS compliance)
 
