@@ -14,3 +14,15 @@ This application uses a .NET wrapper written by Gary Sharp (see [link to project
 ## Prerequisites & Dependencies
 - Requires a Windows-based machine running Microsoft's IIS web server plattform for hosting this ASP.NET application. This Windows machine must be in the same domain as the DHCP server(s). The application has been successfully deployed and tested on Windows Server 2016 and IIS 10.
 - Requires an service account (user) that is member of the local group `DHCP Users`. The ASP.NET application must be executed with the identity of this service account. See the instructions below for setting up such an account and enabling the required ASP.NET feature called impersonation.
+
+## Installation Guide
+Follow these steps in order to deploy the ASP.NET Web API for Windows DHCP Server:
+
+### Prepare a Windows Host
+Prepare a Windows-based machine (e.g. Windows Server 2016) and install IIS on this machine (detailed instructions for the installation of IIS under Windows Server 2016 can be found [here](https://www.rootusers.com/how-to-install-iis-in-windows-server-2016/). Make sure that the prepared host is in the same domain as the DHCP server(s), which should be accessed via the API, and can reach them via network.
+
+### Create a Service Account with Required Permissions
+For querying DHCP status information through Microsoft's native DHCP management API, we require a user account that has at least permission to read DHCP server settings, i.e. that is member of the local group `DHCP Users`.
+
+
+
