@@ -31,16 +31,11 @@ namespace skotstein.net.dhcp.webapi.Model
 {
     public class Reservation : Resource
     {
-        private string _name;
         private string _ipAddress;
         private string _subnetMask;
         private string _macAddress;
-        private string _comment;
         private IList<string> _allowedClientTypes = new List<string>();
         private IList<DhcpOption> _options = new List<DhcpOption>();
-
-        [JsonProperty("name")]
-        public string Name { get => _name; set => _name = value; }
 
         [JsonProperty("ipAddress")]
         public string IpAddress { get => _ipAddress; set => _ipAddress = value; }
@@ -48,12 +43,8 @@ namespace skotstein.net.dhcp.webapi.Model
         [JsonProperty("subnetMask")]
         public string SubnetMask { get => _subnetMask; set => _subnetMask = value; }
 
-
         [JsonProperty("macAddress")]
         public string MacAddress { get => _macAddress; set => _macAddress = value; }
-
-        [JsonProperty("comment")]
-        public string Comment { get => _comment; set => _comment = value; }
 
         [JsonProperty("allowedClientTypes")]
         public IList<string> AllowedClientTypes { get => _allowedClientTypes; set => _allowedClientTypes = value; }
@@ -71,8 +62,8 @@ namespace skotstein.net.dhcp.webapi.Model
             this.IpAddress = dhcpServerScopeReservation.IpAddress.ToString();
             this.MacAddress = dhcpServerScopeReservation.HardwareAddress.Replace(":", "");
             this.SubnetMask = dhcpServerScopeReservation.IpAddressMask.ToString();
-            this.Comment = null;
-            this.Name = null;
+
+
             if (((int)dhcpServerScopeReservation.AllowedClientTypes & (int)DhcpServerClientTypes.BOOTP) == 2)
             {
                 this.AllowedClientTypes.Add("BOOTP");

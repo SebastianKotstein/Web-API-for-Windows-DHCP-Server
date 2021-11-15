@@ -82,6 +82,7 @@ namespace skotstein.net.dhcp.webapi.Model
             this.LeaseExpires = dhcpServerClient.LeaseExpires;
             this.LeaseExpired = dhcpServerClient.LeaseExpired;
             this.Name = dhcpServerClient.Name;
+
             this.HasReservation = (((int)dhcpServerClient.Type & (int)DhcpServerClientTypes.Reservation) == 4);
             if (((int)dhcpServerClient.Type & (int)DhcpServerClientTypes.BOOTP) == 2)
             {

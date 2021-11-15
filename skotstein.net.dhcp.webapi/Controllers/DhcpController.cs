@@ -216,9 +216,9 @@ namespace skotstein.net.dhcp.webapi.Controllers
                     Reservations reservations = _service.GetReservations(serverName, scopeName);
                     foreach (Reservation reservation in reservations.Items)
                     {
-                        reservation.AddHyperlink("item", Url.Link("get_client", new { serverName = server.Name, scopeName = scope.Name, macAddress = reservation.MacAddress }));
+                        reservation.AddHyperlink("item", Url.Link("get_reservation", new { serverName = server.Name, scopeName = scope.Name, macAddress = reservation.MacAddress }));
                     }
-                    reservations.AddHyperlink("self", Url.Link("get_clients", new { serverName = server.Name, scopeName = scope.Name }));
+                    reservations.AddHyperlink("self", Url.Link("get_reservations", new { serverName = server.Name, scopeName = scope.Name }));
                     reservations.AddHyperlink("scope", Url.Link("get_scope", new { serverName = server.Name, scopeName = scope.Name }));
                     reservations.AddHyperlink("server", Url.Link("get_server", new { serverName = server.Name + "/" }));
                     return Ok(reservations);
@@ -300,8 +300,8 @@ namespace skotstein.net.dhcp.webapi.Controllers
                     Reservation reservation = _service.GetReservation(serverName, scopeName, macAddress);
                     if(reservation != null)
                     {
-                        reservation.AddHyperlink("self", Url.Link("get_client", new { serverName = server.Name, scopeName = scope.Name, macAddress = reservation.MacAddress }));
-                        reservation.AddHyperlink("collection", Url.Link("get_clients", new { serverName = server.Name, scopeName = scope.Name }));
+                        reservation.AddHyperlink("self", Url.Link("get_reservation", new { serverName = server.Name, scopeName = scope.Name, macAddress = reservation.MacAddress }));
+                        reservation.AddHyperlink("collection", Url.Link("get_reservations", new { serverName = server.Name, scopeName = scope.Name }));
                         reservation.AddHyperlink("scope", Url.Link("get_scope", new { serverName = server.Name, scopeName = scope.Name }));
                         reservation.AddHyperlink("server", Url.Link("get_server", new { serverName = server.Name + "/" }));
                         if (_service.HasClient(serverName, scopeName, reservation.MacAddress))
