@@ -10,11 +10,16 @@ This application uses a .NET wrapper written by Gary Sharp (see [link to project
   - **Reservations** made for clients in a scope (MAC addresses, IP address, etc. )
 - Supports both JSON (default) and XML as media type
 - Navigational support through embedded hyperlinks (HATEOAS compliance)
-- OpenAPI offline documentation
+- OpenAPI offline documentation ([Link](https://github.com/SebastianKotstein/Web-API-for-Windows-DHCP-Server/blob/master/OpenAPI.yml))
 
-## Prerequisites & Dependencies
+## Prerequisites
 - Requires a Windows-based machine running Microsoft's IIS web server plattform for hosting this ASP.NET application. This Windows machine must be in the same domain as the DHCP server(s). The application has been successfully deployed and tested on Windows Server 2016 and IIS 10.
 - Requires an service account (user) that is member of the local group `DHCP Users`. The ASP.NET application must be executed with the identity of this service account. See the instructions below for setting up the account and enabling the required ASP.NET feature called impersonation.
+
+## Dependencies
+- ASP.NET Web API
+- [DhcpServerApi](https://github.com/garysharp/DhcpServerApi) by Gary Sharp (MIT License)
+- [Newtonsoft.Json](https://www.newtonsoft.com/json) by James Newton-King (MIT License)
 
 ## Installation Guide
 Follow these steps in order to deploy the ASP.NET Web API for Windows DHCP Server:
