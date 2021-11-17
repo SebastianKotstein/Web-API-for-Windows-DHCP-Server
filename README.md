@@ -24,6 +24,9 @@ This application uses a .NET wrapper written by Gary Sharp (see [link to project
 ## Installation Guide
 See [Installation Guide](https://github.com/SebastianKotstein/Web-API-for-Windows-DHCP-Server/wiki/Installation-Guide) in Wiki
 
+## Limitations & Known Issues
+- Due to a bug in ASP.NET a path parameter cannot be substituted with a string that contains hypens (e.g. `dhcp-00.mydomain.com`) when this path parameter is the last segment of the path (e.g. `https://dhcp-api.mydomain.local/servers/dhcp-00.mydomain.com` for the templated URI `https://dhcp-api.mydomain.local/servers/{serverName}`). Hence, as a workaround, it is possible to add a trailing slash to the URI (i.e. `https://dhcp-api.mydomain.local/servers/dhcp-00.mydomain.com/`), which is bad style in terms of REST, in order to trigger the intended endpoint. We, therefore, decided to add a trailing slash to all advertised URIs referencing a server resource as these URIs are likely to contain hyphens. 
+
 
 
 
