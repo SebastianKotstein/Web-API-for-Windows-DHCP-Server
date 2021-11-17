@@ -50,5 +50,69 @@ namespace skotstein.net.dhcp.webapi.Model
         {
             _links.Add(new Hyperlink(rel, href));
         }
+
+        public bool IsEntityPropertyContainingQueryParameterValue(string entityValue, string queryParameterValue)
+        {
+            if(queryParameterValue == null)
+            {
+                return true;
+            }
+            else
+            {
+                if (String.IsNullOrWhiteSpace(entityValue))
+                {
+                    if (String.IsNullOrWhiteSpace(queryParameterValue))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return entityValue.ToLower().Contains(queryParameterValue.ToLower());
+                }
+            }
+        }
+
+        public bool IsEntityPropertyEqualQueryParameterValue(string entityValue, string queryParameterValue)
+        {
+            if (queryParameterValue == null)
+            {
+                return true;
+            }
+            else
+            {
+                if (String.IsNullOrWhiteSpace(entityValue))
+                {
+                    if (String.IsNullOrWhiteSpace(queryParameterValue))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return entityValue.ToLower().CompareTo(queryParameterValue.ToLower())==0;
+                }
+            }
+        }
+
+        public bool IsEntityPropertyEqualQueryParameterValue(bool entityValue, Nullable<bool> queryParameterValue)
+        {
+            if (!queryParameterValue.HasValue)
+            {
+                return true;
+            }
+            else
+            {
+                return entityValue == queryParameterValue.Value;
+            }
+        }
     }
 }

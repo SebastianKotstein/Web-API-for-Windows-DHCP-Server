@@ -118,6 +118,20 @@ namespace skotstein.net.dhcp.webapi.Model
                     break;
             }
         }
-        
+        public bool IsMatchingFilter(string name, string ip, string macAddress, string addressState, Nullable<bool> leaseHasExpired, Nullable<bool> hasReservation)
+        {
+            if(macAddress != null)
+            {
+                macAddress = macAddress.Replace(":", "");
+            }
+
+            return IsEntityPropertyContainingQueryParameterValue(this.Name, name)
+                && IsEntityPropertyContainingQueryParameterValue(this.IpAddress, ip)
+                && IsEntityPropertyContainingQueryParameterValue(this.MacAddress, macAddress)
+                && IsEntityPropertyEqualQueryParameterValue(this.AddressState, addressState)
+                && IsEntityPropertyEqualQueryParameterValue(this.LeaseExpired, leaseHasExpired)
+                && IsEntityPropertyEqualQueryParameterValue(this.HasReservation, hasReservation);
+        }
+
     }
 }

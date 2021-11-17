@@ -133,5 +133,12 @@ namespace skotstein.net.dhcp.webapi.Model
             }
 
         }
+
+        public bool IsMatchingFilter(string name, string ip, string state)
+        {
+            return IsEntityPropertyContainingQueryParameterValue(this.Name, name)
+                && IsEntityPropertyContainingQueryParameterValue(this.IpAddress, ip)
+                && IsEntityPropertyEqualQueryParameterValue(this.ScopeState, state);
+        }
     }
 }

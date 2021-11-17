@@ -34,16 +34,22 @@ namespace skotstein.net.dhcp.webapi.BusinessLogic
     public class DhcpService
     {
         /// <summary>
-        /// Returns a collection of all available DHCP servers.
+        /// Returns a collection of all available DHCP servers. Only servers matching the passed query parameters will be added to the returned collection.
         /// </summary>
+        /// <param name="name">Query parameter value for filtering the name.  If not null, the server entity will be added to the returned collection if this value is a substring of the name of the server.</param>
+        /// <param name="ip">Query parameter value for filtering the IP.  If not null, the server entity will be added to the returned collection if this value is a substring of the IP of the server.</param>
+        /// <param name="version">Query parameter value for filtering the version.  If not null, the server entity will be added to the returned collection if this value is a substring of the version of the server.</param>
         /// <returns>collection of all available DHCP servers</returns>
-        public Servers GetServers()
+        public Servers GetServers(string name, string ip, string version)
         {
             Servers servers = new Servers();
             foreach(DhcpServer dhcpServer in DhcpServer.Servers)
             {
                 Server server = new Server(dhcpServer);
-                servers.Items.Add(server);
+                if (server.IsMatchingFilter(name, ip, version))
+                {
+                    servers.Items.Add(server);
+                }
             }
             return servers;
         }
@@ -94,12 +100,15 @@ namespace skotstein.net.dhcp.webapi.BusinessLogic
         }
 
         /// <summary>
-        /// Returns a collection of all scopes that are served by the DHCP server having the passed name.
+        /// Returns a collection of all scopes that are served by the DHCP server having the passed name. Only scopes matching the passed query parameters will be added to the returned collection.
         /// The method returns null, if no such DHCP server exists.
         /// </summary>
         /// <param name="serverName">name of the server</param>
+        /// <param name="scopeName">Query parameter value for filtering the name.  If not null, the scope entity will be added to the returned collection if this value is a substring of the name of the scope.</param>
+        /// <param name="scopeIp">Query parameter value for filtering the IP.  If not null, the scope entity will be added to the returned collection if this value is a substring of the IP of the scope.</param>
+        /// <param name="scopeState">Query parameter value for filtering the scope state. If not null, the scope entity will be added to the returned collection if this value is equals to the scope state.</param>
         /// <returns>collection of scopes or null</returns>
-        public Scopes GetScopes(string serverName)
+        public Scopes GetScopes(string serverName, string scopeName, string scopeIp, string scopeState)
         {
             DhcpServer dhcpServer = GetServerAsDhcpServer(serverName);
             if(dhcpServer != null)
@@ -108,7 +117,10 @@ namespace skotstein.net.dhcp.webapi.BusinessLogic
                 foreach(DhcpServerScope dhcpServerScope in dhcpServer.Scopes)
                 {
                     Scope scope = new Scope(dhcpServerScope);
-                    scopes.Items.Add(scope);
+                    if (scope.IsMatchingFilter(scopeName, scopeIp, scopeState))
+                    {
+                        scopes.Items.Add(scope);
+                    }
                 }
                 return scopes;
             }
@@ -178,12 +190,19 @@ namespace skotstein.net.dhcp.webapi.BusinessLogic
 
         /// <summary>
         /// Returns a collection of all clients that are served by the DHCP server having the passed server name and belongs to the scope having the passed scope name.
+        /// Only clients matching the passed query parameters will be added to the returned collection.
         /// The method returns null, if no such DHCP server and/or scope exists.
         /// </summary>
         /// <param name="serverName">name of the server</param>
         /// <param name="scopeName">name of the scope</param>
+        /// <param name="name">Query parameter value for filtering the name.  If not null, the client entity will be added to the returned collection if this value is a substring of the nameof the client.</param>
+        /// <param name="ip">Query parameter value for filtering the IP address. If not null, the client entity will be added to the returned collection if this value is a substring of the IP of the client.</param>
+        /// <param name="macAddress">Query parameter value for filtering the MAC address. If not null, the client entity will be added to the returned collection if this value is a substring of the MAC of the client.</param>
+        /// <param name="addressState">Query parameter value for filtering the address state. If not null, the client entity will be added to the returned collection if this value is equals to the address state of the client.</param>
+        /// <param name="leaseHasExpired">Query parameter value for filtering the lease state. If not null, the client entity will be added to the returned collection if this value is equals to the lease state of the client.</param>
+        /// <param name="hasReservation">Query parameter value for filtering the reservation state. If not null, the client entity will be added to the returned collection if this value is equals to the reservation state of the client.</param>
         /// <returns>collection of clients or null</returns>
-        public Clients GetClients(string serverName, string scopeName)
+        public Clients GetClients(string serverName, string scopeName, string name, string ip, string macAddress, string addressState, Nullable<bool> leaseHasExpired, Nullable<bool> hasReservation)
         {
             DhcpServerScope dhcpServerScope = GetScopeAsDhcpServerScope(serverName, scopeName);
             if (dhcpServerScope != null)
@@ -192,7 +211,10 @@ namespace skotstein.net.dhcp.webapi.BusinessLogic
                 foreach (DhcpServerClient dhcpServerClient in dhcpServerScope.Clients)
                 {
                     Client client = new Client(dhcpServerClient);
-                    clients.Items.Add(client);
+                    if (client.IsMatchingFilter(name, ip, macAddress, addressState, leaseHasExpired, hasReservation))
+                    {
+                        clients.Items.Add(client);
+                    }
                 }
                 return clients;
             }
@@ -265,12 +287,15 @@ namespace skotstein.net.dhcp.webapi.BusinessLogic
 
         /// <summary>
         /// Returns a collection of all reservations that are served by the DHCP server having the passed server name and belongs to the scope having the passed scope name.
+        /// Only reservations matching the passed query parameters will be added to the returned collection.
         /// The method returns null, if no such DHCP server and/or scope exists.
         /// </summary>
         /// <param name="serverName">name of the server</param>
         /// <param name="scopeName">name of the scope</param>
+        /// <param name="ip">Query parameter value for filtering the ip address. If not null, the reservation entity will be added to the returned collection if this value is a substring of the IP of the reservation.</param>
+        /// <param name="mac">Query parameter value for filtering the MAC address. If not null, the reservation entity will be added to the returned collection if this value is a substring of the MAC of the reservation.</param>
         /// <returns>collection of reservations or null</returns>
-        public Reservations GetReservations(string serverName, string scopeName)
+        public Reservations GetReservations(string serverName, string scopeName, string ip, string mac)
         {
             DhcpServerScope dhcpServerScope = GetScopeAsDhcpServerScope(serverName, scopeName);
             if (dhcpServerScope != null)
@@ -279,7 +304,10 @@ namespace skotstein.net.dhcp.webapi.BusinessLogic
                 foreach (DhcpServerScopeReservation dhcpServerScopeReservation in dhcpServerScope.Reservations)
                 {
                     Reservation reservation = new Reservation(dhcpServerScopeReservation);
-                    reservations.Items.Add(reservation);
+                    if (reservation.IsMatchingFilter(ip, mac))
+                    {
+                        reservations.Items.Add(reservation);
+                    }
                 }
                 return reservations;
             }

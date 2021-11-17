@@ -58,14 +58,18 @@ namespace skotstein.net.dhcp.webapi.Controllers
         }
 
         /// <summary>
-        /// Returns a store of all available DHCP servers.
+        /// Returns all available DHCP servers.
+        /// Optionally, the returned list can be filtered by using query parameters (consult <see cref="DhcpService.GetServers(string, string, string)"/> for details).
         /// </summary>
+        /// <param name="name">Optional query parameter</param>
+        /// <param name="ip">Optional query parameter</param>
+        /// <param name="version">Optional query parameter</param>
         /// <returns></returns>
         [HttpGet]
         [Route("servers", Name = "get_servers")]
-        public IHttpActionResult GetServers()
+        public IHttpActionResult GetServers(string name = null, string ip = null, string version = null)
         {
-            Servers servers = _service.GetServers();
+            Servers servers = _service.GetServers(name,ip,version);
             foreach(Server server in servers.Items)
             {
                 server.AddHyperlink("item", Url.Link("get_server", new { serverName = server.Name+"/" }));
@@ -79,7 +83,7 @@ namespace skotstein.net.dhcp.webapi.Controllers
         /// Note: Due to a bug in ASP.NET it is not possible to subsitute path parameters with strings containing '-'.
         /// As a workaround, as '-' might be contained in a server name, make sure to add a trailing '/' after the server name.
         /// </summary>
-        /// <param name="serverName"></param>
+        /// <param name="serverName">Required path parameter</param>
         /// <returns></returns>
         [HttpGet]
         [Route("servers/{serverName}", Name = "get_server")]
@@ -101,17 +105,21 @@ namespace skotstein.net.dhcp.webapi.Controllers
 
         /// <summary>
         /// Returns all scopes handled by the specified DHCP server.
+        /// Optionally, the returned list can be filtered by using query parameters (consult <see cref="DhcpService.GetScopes(string, string, string, string)"/> for details).
         /// </summary>
-        /// <param name="serverName"></param>
+        /// <param name="serverName">Required path parameter</param>
+        /// <param name="name">Optional query parameter</param>
+        /// <param name="ip">Optional query parameter</param>
+        /// <param name="state">Optional query parameter</param>
         /// <returns></returns>
         [HttpGet]
         [Route("servers/{serverName}/scopes", Name = "get_scopes")]
-        public IHttpActionResult getScopes(string serverName)
+        public IHttpActionResult getScopes(string serverName, string name = null, string ip = null, string state= null)
         {
             Server server = _service.GetServer(serverName);
             if (server != null)
             {
-                Scopes scopes = _service.GetScopes(serverName);
+                Scopes scopes = _service.GetScopes(serverName,name,ip,state);
                 foreach(Scope scope in scopes.Items)
                 {
                     scope.AddHyperlink("item", Url.Link("get_scope", new { serverName = server.Name, scopeName=scope.Name }));
@@ -129,8 +137,8 @@ namespace skotstein.net.dhcp.webapi.Controllers
         /// <summary>
         /// Returns a specified scope handled by the specified DHCP server.
         /// </summary>
-        /// <param name="serverName"></param>
-        /// <param name="scopeName"></param>
+        /// <param name="serverName">Required path parameter</param>
+        /// <param name="scopeName">Required path parameter</param>
         /// <returns></returns>
         [HttpGet]
         [Route("servers/{serverName}/scopes/{scopeName}", Name = "get_scope")]
@@ -162,13 +170,20 @@ namespace skotstein.net.dhcp.webapi.Controllers
 
         /// <summary>
         /// Returns the list of known clients that are assigned to the specified scope handled by the specified DHCP server.
+        /// Optionally, the returned list can be filtered by using query parameters (consult <see cref="DhcpService.GetClients(string, string, string, string, string, string, bool?, bool?)"/> for details).
         /// </summary>
-        /// <param name="serverName"></param>
-        /// <param name="scopeName"></param>
+        /// <param name="serverName">Required path parameter</param>
+        /// <param name="scopeName">Required path parameter</param>
+        /// <param name="name">Optional query parameter</param>
+        /// <param name="ip">Optional query parameter</param>
+        /// <param name="mac">Optional query parameter</param>
+        /// <param name="state">Optional query parameter</param>
+        /// <param name="leaseExpired">Optional query parameter</param>
+        /// <param name="hasReservation">Optional query parameter</param>
         /// <returns></returns>
         [HttpGet]
         [Route("servers/{serverName}/scopes/{scopeName}/clients", Name = "get_clients")]
-        public IHttpActionResult GetClients(string serverName, string scopeName)
+        public IHttpActionResult GetClients(string serverName, string scopeName, string name = null, string ip = null, string mac = null, string state= null, Nullable<bool> leaseExpired = null, Nullable<bool> hasReservation = null)
         {
             Server server = _service.GetServer(serverName);
             if (server != null)
@@ -176,7 +191,7 @@ namespace skotstein.net.dhcp.webapi.Controllers
                 Scope scope = _service.GetScope(serverName, scopeName);
                 if (scope != null)
                 {
-                    Clients clients = _service.GetClients(serverName, scopeName);
+                    Clients clients = _service.GetClients(serverName, scopeName,name,ip, mac, state, leaseExpired, hasReservation);
                     foreach(Client client in clients.Items)
                     {
                         client.AddHyperlink("item", Url.Link("get_client", new { serverName = server.Name, scopeName = scope.Name, macAddress = client.MacAddress }));
@@ -199,13 +214,16 @@ namespace skotstein.net.dhcp.webapi.Controllers
 
         /// <summary>
         /// Returns the list of reservations assigned to specified scope handled by the specified DHCP server.
+        /// Optionally, the returned list can be filtered by using query parameters (consult <see cref="DhcpService.GetReservations(string, string, string, string)"/> for details).
         /// </summary>
-        /// <param name="serverName"></param>
-        /// <param name="scopeName"></param>
+        /// <param name="serverName">Required path parameter</param>
+        /// <param name="scopeName">Required path parameter</param>
+        /// <param name="ip">Optional query parameter</param>
+        /// <param name="mac">Optional query parameter</param>
         /// <returns></returns>
         [HttpGet]
         [Route("servers/{serverName}/scopes/{scopeName}/reservations", Name = "get_reservations")]
-        public IHttpActionResult GetReservations(string serverName, string scopeName)
+        public IHttpActionResult GetReservations(string serverName, string scopeName, string ip = null, string mac = null)
         {
             Server server = _service.GetServer(serverName);
             if (server != null)
@@ -213,7 +231,7 @@ namespace skotstein.net.dhcp.webapi.Controllers
                 Scope scope = _service.GetScope(serverName, scopeName);
                 if (scope != null)
                 {
-                    Reservations reservations = _service.GetReservations(serverName, scopeName);
+                    Reservations reservations = _service.GetReservations(serverName, scopeName, ip, mac);
                     foreach (Reservation reservation in reservations.Items)
                     {
                         reservation.AddHyperlink("item", Url.Link("get_reservation", new { serverName = server.Name, scopeName = scope.Name, macAddress = reservation.MacAddress }));
@@ -237,9 +255,9 @@ namespace skotstein.net.dhcp.webapi.Controllers
         /// <summary>
         /// Returns the specified client that is assigned to the specified scope handled by the specified DHCP server.
         /// </summary>
-        /// <param name="serverName"></param>
-        /// <param name="scopeName"></param>
-        /// <param name="macAddress"></param>
+        /// <param name="serverName">Required path parameter</param>
+        /// <param name="scopeName">Required path parameter</param>
+        /// <param name="macAddress">Required path parameter</param>
         /// <returns></returns>
         [HttpGet]
         [Route("servers/{serverName}/scopes/{scopeName}/clients/{macAddress}", Name = "get_client")]
@@ -283,9 +301,9 @@ namespace skotstein.net.dhcp.webapi.Controllers
         /// <summary>
         /// Returns the reservation that is issued for the client having the passed MAC address and is assigned to the specified scope handled by the specified DHCP server.
         /// </summary>
-        /// <param name="serverName"></param>
-        /// <param name="scopeName"></param>
-        /// <param name="macAddress"></param>
+        /// <param name="serverName">Required path parameter</param>
+        /// <param name="scopeName">Required path parameter</param>
+        /// <param name="macAddress">Required path parameter</param>
         /// <returns></returns>
         [HttpGet]
         [Route("servers/{serverName}/scopes/{scopeName}/reservations/{macAddress}", Name = "get_reservation")]

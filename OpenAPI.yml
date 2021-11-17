@@ -1,0 +1,823 @@
+openapi: '3.0.2'
+info:
+  title: Web API for Windows DHCP Server
+  version: '1.0'
+servers:
+  - url: https://localhost:8443/
+
+components:
+  schemas:
+      error:
+        type: object
+        properties:
+          code:
+            type: integer
+            example: 404
+          message:
+            type: string
+            example: Scope 'iot_clients' not found
+          time:
+            type: string
+            example: '2021-11-15T15:53:25.518705Z'
+          _links:
+            type: array
+            items:
+              $ref: '#/components/schemas/hyperlink'
+      reservation:
+        type: object
+        properties:
+          ipAddress:
+            type: string
+            example: 10.1.20.144
+          subnetMask:
+            type: string
+            example: 255.255.255.0
+          macAddress:
+            type: string
+            example: 00505694155B
+          allowedClientTypes:
+            type: string
+            enum:
+            - BOOTP
+            - DHCP
+          options:
+            type: array
+            items:
+              $ref: '#/components/schemas/option'
+          _links:
+            type: array
+            items:
+              $ref: '#/components/schemas/hyperlink'
+      client:
+        type: object
+        properties:
+          name:
+            type: string
+            example: client-00.mydomain.local
+          addressState:
+            type: string
+            enum: 
+            - active
+            - declined
+            - offered
+            - doomed
+            - unknown
+          ipAddress:
+            type: string
+            example: 10.1.20.144
+          subnetMask:
+            type: string
+            example: 255.255.255.0
+          macAddress:
+            type: string
+            example: 00505694155B
+          leaseHasExpired:
+            type: boolean
+            example: false
+          leaseExpiryDate:
+            type: string
+            example: '9999-12-31T23:59:59.9999999'
+          hasReservation:
+            type: boolean
+            example: true
+          types:
+            type: array
+            items:
+              type: string
+              enum:
+                - BOOTP
+                - DHCP
+                - Reservation
+          _links:
+            type: array
+            items:
+              $ref: '#/components/schemas/hyperlink'
+      scope:
+        type: object
+        properties:
+          name:
+            type: string
+            example: wifi_clients
+          ipAddress:
+            type: string
+            example: 10.1.20.0
+          subnetMask:
+            type: string
+            example: 255.255.255.0
+          leaseDurationInSeconds:
+            type: integer
+            example: 691200
+          comment:
+            type: string
+            example: Scope of all WiFi clients
+          state:
+            type: string
+            enum:
+              - disabled
+              - disabledSwitched
+              - enabled
+              - enabledSwitched
+              - invalidState
+              - unknown
+          ipRange:
+            $ref: '#/components/schemas/ipRange'
+          excludedIpRanges:
+            type: array
+            items:
+              $ref: '#/components/schemas/ipRange'
+          options:
+            type: array
+            items:
+              $ref: '#/components/schemas/option'
+          _links:
+            type: array
+            items:
+              $ref: '#/components/schemas/hyperlink'
+      ipRange:
+        type: object
+        properties:
+          startIpAddress:
+            type: string
+            example: 10.1.20.101
+          endIpAddress:
+            type: string
+            example: 10.1.20.254
+      option:
+        type: object
+        properties:
+          optionId:
+            type: integer
+            example: 42
+          name:
+            type: string
+            example: NTP Servers
+          values:
+            type: array
+            items:
+              type: string
+              example: "10.1.20.10"
+      server:
+        type: object
+        properties:
+          name:
+            type: string
+            example: dhcp-00.mydomain.local
+          ipAddress:
+            type: string
+            example: 10.1.20.1
+          version: 
+            type: string
+            enum: 
+            - Windows 2000
+            - Windows 2003 / 2003 R2
+            - Windows 2008
+            - Windows 2008 R2
+            - Windows 2012
+            - Windows 2012 R2
+            - Windows NT 3.1
+            - Windows NT 3.5
+            - Windows NT 3.51
+            - Windows NT 4.0 
+            - Windows DHCP Server
+          options:
+            type: array
+            items:
+              $ref: '#/components/schemas/option'
+          _links:
+            type: array
+            items:
+              $ref: '#/components/schemas/hyperlink'
+      hyperlink:
+        type: object
+        properties:
+          rel:
+            type: string
+            example: "self"
+          href:
+            type: string
+            example: "https://localhost:8443/servers/dhcp-00.mydomain.local" 
+  parameters:
+    queryReservationIp:
+      name: ip
+      in: query
+      required: false
+      description:  If set, only reservations whose IP addresses contain the specified value (string) will be returned
+      schema:
+        type: string
+      example: 0.144
+    queryReservationMac:
+      name: mac
+      in: query
+      required: false
+      description: If set, only reservations whose MAC addresses contain the specified value (string) will be returned
+      schema:
+        type: string
+      example: 'FF003C'
+    queryClientHasReservation:
+      name: hasReservation
+      in: query
+      required: false
+      description: If set, only clients whose reservation flags are equal the specified value (boolean) will be returned
+      schema:
+        type: boolean
+      example: false
+    queryClientLeaseExpired:
+      name: leaseExpired
+      in: query
+      required: false
+      description: If set, only clients whose lease expiration flags are equal the specified value (boolean) will be returned
+      schema:
+        type: boolean
+      example: true
+    queryClientState:
+      name: state
+      in: query
+      required: false
+      description: If set, only clients whose address states are equal the specified value (string) will be returned
+      schema:
+        type: string
+        enum: 
+        - active
+        - declined
+        - offered
+        - doomed
+        - unknown
+      example: active
+    queryClientMac:
+      name: mac
+      in: query
+      required: false
+      description: If set, only clients whose MAC addresses contain the specified value (string) will be returned
+      schema:
+        type: string
+      example: '3C:FF'
+    queryClientIp:
+      name: ip
+      in: query
+      required: false
+      description: If set, only clients whose IP addresses contain the specified value (string) will be returned
+      schema:
+        type: string
+      example: 144
+    queryClientName:
+      name: name
+      in: query
+      required: false
+      description: If set, only clients whose names contain the specified value (string) will be returned
+      schema:
+        type: string
+      example: pc-0
+    queryScopeState:
+      name: state
+      in: query
+      required: false
+      description: If set, only scopes whose states are equal the specified value (string) will be returned
+      schema:
+        type: string
+        enum:
+          - disabled
+          - disabledSwitched
+          - enabled
+          - enabledSwitched
+          - invalidState
+          - unknown
+      example: disabled
+    queryScopeIp:
+      name: ip
+      in: query
+      required: false
+      description: If set, only scopes whose IP addresses contain the specified value (string) will be returned
+      schema:
+        type: string
+    queryScopeName:
+      name: name
+      in: query
+      required: false
+      description: If set, only scopes whose names contain the specified value (string) will be returned
+      schema:
+        type: string
+      example: wifi
+    queryServerVersion:
+      name: version
+      in: query
+      required: false
+      description: If set, only servers whose versions contain the specified value (string) will be returned
+      schema:
+        type: string
+      example: '2008'
+    queryServerIpAddress:
+      name: ip
+      in: query
+      required: false
+      description: If set, only servers whose IP addresses contain the specified value (string) will be returned
+      schema:
+        type: string
+      example: '10.1'
+    queryServerName:
+      name: name
+      in: query
+      required: false
+      description: If set, only servers whose names contain the specified value (string) will be returned
+      schema:
+        type: string
+      example: dhcp-
+    macAddress:
+      name: macAddress
+      in: path
+      required: true
+      description: The MAC address of the client
+      schema:
+        type: string
+      example: 00505694155B 
+    scopeName:
+      name: scopeName
+      in: path
+      required: true
+      description: The name of the scope
+      schema:
+        type: string
+      example: wifi_clients
+    serverName:
+      name: serverName
+      in: path
+      required: true
+      description: The name of the DHCP server
+      schema:
+        type: string
+      example: dhcp-00.mydomain.local  
+paths:
+  /:
+    get:
+      tags: 
+      - Entry Point
+      summary: Endpoint serving as entry point for this API
+      description: Returns a link for querying all servers. This endpoint serves as an entry point for this API.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _links:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/hyperlink'
+              example:
+                _links:
+                  - rel: self
+                    href: https://localhost:8443/servers
+  /servers:
+    get:
+      tags: 
+      - Servers
+      summary: Get all DHCP servers
+      description: Returns a collection of DHCP servers that are accessible via this API
+      parameters:
+        - $ref: '#/components/parameters/queryServerName'
+        - $ref: '#/components/parameters/queryServerIpAddress'
+        - $ref: '#/components/parameters/queryServerVersion'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  servers:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/server'
+                  _links:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/hyperlink'
+              example:
+                servers:
+                - name: dhcp-00.mydomain.local
+                  ipAddress: 10.1.20.1
+                  version: Windows 2000
+                  options:
+                  - optionId: 42
+                    name: NTP Servers
+                    values:
+                    - 10.1.20.10
+                  _links:
+                    - rel: item
+                      href: https://localhost:8443/servers/dhcp-00.mydomain.local/ 
+                _links:
+                    - rel: self
+                      href: https://localhost:8443/servers
+  /servers/{serverName}:
+    get:
+      tags: 
+      - Servers
+      summary: Get a DHCP server by name
+      description: Returns the DHCP server that has the specified name
+      parameters:
+      - $ref: '#/components/parameters/serverName' 
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/server'
+              example:
+                name: dhcp-00.mydomain.local
+                ipAddress: 10.1.20.1
+                version: Windows 2000
+                options:
+                - optionId: 42
+                  name: NTP Servers
+                  values:
+                  - 10.1.20.10
+                _links:
+                  - rel: self
+                    href: https://localhost:8443/servers/dhcp-00.mydomain.local/
+                  - rel: collection
+                    href: https://localhost:8443/servers
+                  - rel: scopes
+                    href: https://localhost:8443/servers/dhcp-00.mydomain.local/scopes
+        '404':
+          description: Server not found
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/error'
+              example:
+                code: 404
+                message: Server 'dhcp-10.mydomain.local' not found
+                time: '2021-11-15T15:53:25.518705Z'
+                _links:
+                  - rel: base
+                    href: https://localhost:8443/
+  /servers/{serverName}/scopes:
+    get:
+      tags: 
+      - Scopes
+      summary: Get all scopes of a DHCP server
+      description: Returns a collection of scopes served by the DHCP server that has the specified name
+      parameters:
+      - $ref: '#/components/parameters/serverName'
+      - $ref: '#/components/parameters/queryScopeName'
+      - $ref: '#/components/parameters/queryScopeIp'
+      - $ref: '#/components/parameters/queryScopeState'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+                schema:
+                  type: object
+                  properties:
+                    scopes:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/scope'
+                    _links:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/hyperlink'
+                example:
+                  scopes:
+                  - name: wifi_clients
+                    ipAddress: 10.1.20.0
+                    subnetMask: 255.255.255.0
+                    leaseDurationInSeconds: 691200
+                    comment: wifi clients
+                    state: enabled
+                    ipRange:
+                      startIpAddress: 10.1.20.101
+                      endIpAddress: 10.1.20.254
+                    excludedIpRanges:
+                      - startIpAddress: 10.1.20.201
+                        endIpAddress: 10.1.20.254
+                    options:
+                      - optionId: 6
+                        name: DNS Servers
+                        values: 
+                          - 10.1.20.10
+                          - 10.1.20.20
+                          - 8.8.8.8
+                    _links:
+                      - rel: item
+                        href: https://localhost:8443/servers/dhcp-00.mydomain.local/scopes/wifi_clients
+                  _links:
+                    - rel: self
+                      href: https://localhost:8443/servers/dhcp-00.mydomain.local/scopes
+                    - rel: server
+                      href: https://localhost:8443/servers/dhcp-00.mydomain.local/
+        '404':
+          description: Server not found
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/error'
+              example:
+                code: 404
+                message: Server 'dhcp-10.mydomain.local' not found
+                time: '2021-11-15T15:53:25.518705Z'
+                _links:
+                  - rel: base
+                    href: https://localhost:8443/
+  /servers/{serverName}/scopes/{scopeName}:
+    get:
+      tags: 
+      - Scopes
+      summary: Get a scope of a DHCP server by name
+      description: Returns the scope that has the specified name and is served by the specified DHCP server
+      parameters:
+      - $ref: '#/components/parameters/scopeName'
+      - $ref: '#/components/parameters/serverName'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/scope'
+              example:
+                name: wifi_clients
+                ipAddress: 10.1.20.0
+                subnetMask: 255.255.255.0
+                leaseDurationInSeconds: 691200
+                comment: wifi clients
+                state: enabled
+                ipRange:
+                  startIpAddress: 10.1.20.101
+                  endIpAddress: 10.1.20.254
+                excludedIpRanges:
+                  - startIpAddress: 10.1.20.201
+                    endIpAddress: 10.1.20.254
+                options:
+                  - optionId: 6
+                    name: DNS Servers
+                    values: 
+                      - 10.1.20.10
+                      - 10.1.20.20
+                      - 8.8.8.8
+                _links:
+                  - rel: self
+                    href: https://localhost:8443/servers/dhcp-00.mydomain.local/scopes/wifi_clients
+                  - rel: collection
+                    href: https://localhost:8443/servers/dhcp-00.mydomain.local/scopes
+                  - rel: clients
+                    href: https://localhost:8443/servers/dhcp-00.mydomain.local/scopes/wifi_clients/clients
+                  - rel: reservations
+                    href: https://localhost:8443/servers/dhcp-00.mydomain.local/scopes/wifi_clients/reservations
+                  - rel: server
+                    href: https://localhost:8443/servers/dhcp-00.mydomain.local/scopes/
+        '404':
+          description: Scope or server not found
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/error'
+              example:
+                code: 404
+                message: Scope 'iot_clients' not found
+                time: '2021-11-15T15:53:25.518705Z'
+                _links:
+                  - rel: base
+                    href: https://localhost:8443/
+  /servers/{serverName}/scopes/{scopeName}/clients:
+    get:
+      tags: 
+      - Clients 
+      summary: Get all clients assigned to a scope
+      description: Returns a collection of clients that are assigned to the scope that has the specified name
+      parameters:
+      - $ref: '#/components/parameters/scopeName'
+      - $ref: '#/components/parameters/serverName'
+      - $ref: '#/components/parameters/queryClientName'
+      - $ref: '#/components/parameters/queryClientIp'
+      - $ref: '#/components/parameters/queryClientMac'
+      - $ref: '#/components/parameters/queryClientState'
+      - $ref: '#/components/parameters/queryClientLeaseExpired'
+      - $ref: '#/components/parameters/queryClientHasReservation'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  clients:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/client'
+                  _links:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/hyperlink'
+              example:
+                clients:
+                - name: client-00.mydomain.local
+                  addressState: active
+                  ipAddress: 10.1.20.144
+                  subnetMask: 255.255.255.0
+                  macAddress: 00505694155B
+                  leaseHasExpired: false
+                  leaseExpiryDate: '9999-12-31T23:59:59.9999999'
+                  hasReservation: true
+                  types:
+                    - DHCP
+                    - Reservation
+                  _links:
+                    - rel: item
+                      href: https://localhost:8443/servers/dhcp-00.mydomain.local/scopes/wifi_clients/clients/00505694155B
+                _links:
+                  - rel: self
+                    href: https://localhost:8443/servers/dhcp-00.mydomain.local/scopes/wifi_clients/clients
+                  - rel: scope
+                    href: https://localhost:8443/servers/dhcp-00.mydomain.local/scopes/wifi_clients
+                  - rel: server
+                    href: https://localhost:8443/servers/dhcp-00.mydomain.local/
+        '404':
+          description: Scope or server not found
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/error'
+              example:
+                code: 404
+                message: Scope 'iot_clients' not found
+                time: '2021-11-15T15:53:25.518705Z'
+                _links:
+                  - rel: base
+                    href: https://localhost:8443/
+  /servers/{serverName}/scopes/{scopeName}/clients/{macAddress}:
+    get:
+      tags: 
+      - Clients
+      summary: Get a client assigned to a scope by MAC address
+      description: Returns the client that has the specified MAC address and is assigned to the specified scope
+      parameters:
+      - $ref: '#/components/parameters/macAddress'
+      - $ref: '#/components/parameters/scopeName'
+      - $ref: '#/components/parameters/serverName'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/client'
+              example:
+                name: client-00.mydomain.local
+                addressState: active
+                ipAddress: 10.1.20.144
+                subnetMask: 255.255.255.0
+                macAddress: 00505694155B
+                leaseHasExpired: false
+                leaseExpiryDate: '9999-12-31T23:59:59.9999999'
+                hasReservation: true
+                types:
+                  - DHCP
+                  - Reservation
+                _links:
+                  - rel: self
+                    href: https://localhost:8443/servers/dhcp-00.mydomain.local/scopes/wifi_clients/clients/00505694155B
+                  - rel: collection
+                    href: https://localhost:8443/servers/dhcp-00.mydomain.local/scopes/wifi_clients/clients
+                  - rel: scope
+                    href: https://localhost:8443/servers/dhcp-00.mydomain.local/scopes/wifi_clients
+                  - rel: server
+                    href: https://localhost:8443/servers/dhcp-00.mydomain.local/
+                  - rel: reservation
+                    href: https://localhost:8443/servers/dhcp-00.mydomain.local/scopes/wifi_clients/reservations/00505694155B
+        '404':
+          description: Client, scope, or server not found
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/error'
+              example:
+                code: 404
+                message: Client '005694155B' not found
+                time: '2021-11-15T15:53:25.518705Z'
+                _links:
+                  - rel: base
+                    href: https://localhost:8443/
+  /servers/{serverName}/scopes/{scopeName}/reservations:
+    get:
+      tags: 
+      - Reservations
+      summary: Get all reservations of a scope
+      description: Returns a collection of reservations made for clients in the scope that has the specified name
+      parameters:
+      - $ref: '#/components/parameters/scopeName'
+      - $ref: '#/components/parameters/serverName'
+      - $ref: '#/components/parameters/queryReservationIp'
+      - $ref: '#/components/parameters/queryReservationMac'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  clients:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/reservation'
+                  _links:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/hyperlink'
+              example:
+                reservations:
+                - ipAddress: 10.1.20.144
+                  subnetMask: 255.255.255.0
+                  macAddress: 00505694155B
+                  allowedClientTypes:
+                    - BOOTP
+                    - DHCP
+                  options:
+                  _links:
+                    - rel: item
+                      href: https://localhost:8443/servers/dhcp-00.mydomain.local/scopes/wifi_clients/reservations/00505694155B
+                _links:
+                  - rel: self
+                    href: https://localhost:8443/servers/dhcp-00.mydomain.local/scopes/wifi_clients/reservations
+                  - rel: scope
+                    href: https://localhost:8443/servers/dhcp-00.mydomain.local/scopes/wifi_clients
+                  - rel: server
+                    href: https://localhost:8443/servers/dhcp-00.mydomain.local/
+        '404':
+          description: Scope or server not found
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/error'
+              example:
+                code: 404
+                message: Scope 'iot_clients' not found
+                time: '2021-11-15T15:53:25.518705Z'
+                _links:
+                  - rel: base
+                    href: https://localhost:8443/ 
+  /servers/{serverName}/scopes/{scopeName}/reservations/{macAddress}:
+    get:
+      tags: 
+        - Reservations
+      summary: Get a reservation of a scope by MAC address
+      description: Returns the reservation that is made for the client that has the specified MAC address in the specified scope
+      parameters:
+      - $ref: '#/components/parameters/macAddress'
+      - $ref: '#/components/parameters/scopeName'
+      - $ref: '#/components/parameters/serverName'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/reservation'
+              example:
+                ipAddress: 10.1.20.144
+                subnetMask: 255.255.255.0
+                macAddress: 00505694155B
+                allowedClientTypes:
+                  - BOOTP
+                  - DHCP
+                options:
+                _links:
+                  - rel: self
+                    href: https://localhost:8443/servers/dhcp-00.mydomain.local/scopes/wifi_clients/reservations/00505694155B
+                  - rel: collection
+                    href: https://localhost:8443/servers/dhcp-00.mydomain.local/scopes/wifi_clients/reservations
+                  - rel: scope
+                    href: https://localhost:8443/servers/dhcp-00.mydomain.local/scopes/wifi_clients
+                  - rel: server
+                    href: https://localhost:8443/servers/dhcp-00.mydomain.local/
+                  - rel: client
+                    href: https://localhost:8443/servers/dhcp-00.mydomain.local/scopes/wifi_clients/clients/00505694155B
+        '404':
+          description: Reservation, scope, or server not found
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/error'
+              example:
+                code: 404
+                message: Reservation '005694155B' not found
+                time: '2021-11-15T15:53:25.518705Z'
+                _links:
+                  - rel: base
+                    href: https://localhost:8443/
+  
+  
+  
+  
+  
+ 
+
+
+
+

@@ -104,5 +104,12 @@ namespace skotstein.net.dhcp.webapi.Model
                 this.Options.Add(option);
             }
         }
+
+        public bool IsMatchingFilter(string name, string ip, string version)
+        {
+            return IsEntityPropertyContainingQueryParameterValue(this.Name, name)
+                && IsEntityPropertyContainingQueryParameterValue(this.IpAddress, ip)
+                && IsEntityPropertyContainingQueryParameterValue(this.Version, version);
+        }
     }
 }

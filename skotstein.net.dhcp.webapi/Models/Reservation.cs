@@ -84,5 +84,16 @@ namespace skotstein.net.dhcp.webapi.Model
                 this.Options.Add(option);
             }
         }
+
+        public bool IsMatchingFilter(string ip, string macAddress)
+        {
+            if (macAddress != null)
+            {
+                macAddress = macAddress.Replace(":", "");
+            }
+
+            return IsEntityPropertyContainingQueryParameterValue(this.IpAddress, ip)
+                && IsEntityPropertyContainingQueryParameterValue(this.MacAddress, macAddress);
+        }
     }
 }
