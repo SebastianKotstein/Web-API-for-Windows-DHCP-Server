@@ -21,6 +21,9 @@ This application uses a .NET wrapper written by Gary Sharp (see [link to project
 - [DhcpServerApi](https://github.com/garysharp/DhcpServerApi) by Gary Sharp (MIT License)
 - [Newtonsoft.Json](https://www.newtonsoft.com/json) by James Newton-King (MIT License)
 
+## Interface Description
+This Web API is documented in an OpenAPI file (see [Link](https://github.com/SebastianKotstein/Web-API-for-Windows-DHCP-Server/blob/master/OpenAPI.yml)) that can be rendered using [editor.swagger.io](https://editor.swagger.io). For simplicity, this documentation contains only Schemas for returned representations in JSON, although both JSON and XML are supported.
+
 ## Installation Guide
 See [Installation Guide](https://github.com/SebastianKotstein/Web-API-for-Windows-DHCP-Server/wiki/Installation-Guide) in Wiki
 
